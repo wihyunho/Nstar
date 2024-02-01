@@ -6,7 +6,7 @@ const BoardList = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10; // 페이지당 보여줄 음식점 수111
+  const itemsPerPage = 10; // 페이지당 보여줄 음식점 수
   const maxPageNumbers = 10; // 페이징 숫자 최대 갯수
 
 
