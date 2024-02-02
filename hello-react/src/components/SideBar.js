@@ -26,6 +26,12 @@ function Header(props) {
                     <span>음식 목록(DB)</span>
                 </a>
             </li>
+            <li className="nav-item">
+                <a className="nav-link" href="SeongsuList">
+                    <i className="fas fa-fw fa-table"></i>
+                    <span>성수 맛집 목록</span>
+                </a>
+            </li>
             <hr class="sidebar-divider d-none d-md-block" />
 
         </ul>

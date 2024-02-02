@@ -8,6 +8,7 @@ import NotFound from './page/NotFound';
 import ListPage from './page/BoardList';
 import DetailPage from './page/BoardDetail';
 import DBListPage from './page/DBList';
+import PlaceList from './page/SeongsuList';
 
 const App = () => {
 	return (
@@ -23,6 +24,7 @@ const App = () => {
 								<Route path="/List/*" element={<ListPage />}></Route>
 								<Route path="/Detail" element={<DetailPage />}></Route>
 								<Route path="/DBList" element={<DBListPage />}></Route>
+								<Route path="/SeongsuList" element={<PlaceList />}></Route>
 								<Route path="*" element={<NotFound />}></Route>
 							</Routes>
 						</div>
