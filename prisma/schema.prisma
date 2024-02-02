@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model restaurant {
+  regno   String  @unique @map("regno")
+  status_cd   Int  @map("status_cd")
+  status_nm   String  @map("status_nm")
+  phone   String  @map("phone")
+  old_post_num    String  @map("old_post_num")
+  old_addr    String  @map("old_addr")
+  new_addr    String  @map("new_addr")
+  new_post_num    Int  @map("new_post_num")
+  name    String  @map("name")
+  update_cd   String  @map("update_cd")
+  update_date DateTime  @map("update_date")
+  category_nm String  @map("category_nm")
+
+  @@map("restaurant")
+}
+
+model oldRestaurant  {
+  name   String @unique @map("name")
+  addr   String  @map("addr")
+  category   String  @map("category")
+  size   Float  @map("size")
+  start_date DateTime  @map("start_date")
+
+  @@map("old_restaurant")
+}

@@ -1,3 +1,5 @@
+const {PrismaClient} = require('@prisma/client')
+const prisma = new PrismaClient()
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -25,10 +27,10 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'hello-react/build')));
 
-app.get('/getDBRestaurant', async (req, res) => {
+app.get('/getDBResaturant', async (req, res) => {
   try {
     const query = {
-      text: "SELECT * FROM restaurant WHERE addr LIKE $1 LIMIT 10",
+      text: "SELECT * FROM old_restaurant WHERE addr LIKE $1 LIMIT 10",
       values: ['%성수%'],
     };
 
@@ -40,34 +42,75 @@ app.get('/getDBRestaurant', async (req, res) => {
   }
 });
 
+app.get('/getDBRestaurant2', async (req, res) => {
+  try {
+    // Prisma Client를 사용하여 쿼리 실행
+    const result = await prisma.oldRestaurant.findMany({
+      where: {
+        addr: {
+          contains: '성수',
+        },
+      },
+      take: 10,
+    });
+
+    res.send(result);
+  } catch (e) {
+    console.error(e);
+    res.status(500).send("서버 에러 발생");
+  }
+});
+
 app.post('/getDBRestaurant', async (req, res) => {
   try {
     var params = req.body; // POST 요청이므로 일반적으로 req.body를 사용합니다.
 
-    const query1 = {
-      text: 
-        "SELECT name,addr,category, TO_CHAR(start_date, 'yyyy-mm-dd') as start_date " +
-        "FROM restaurant " +
-        "WHERE addr LIKE $1 " +
-        "ORDER BY start_date " +
-        "LIMIT $2 " +
-        "OFFSET ($3 - 1) * $2;",
-      values: ['%성수%', params.itemsPerPage, params.curPage],
-    };
+    // Prisma Client 인스턴스를 가져옵니다.
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+
+    const { itemsPerPage, curPage } = params;
+    const restaurants = await prisma.oldRestaurant.findMany({
+      where: {
+        addr: {
+          contains: '성수',
+        },
+      },
+      orderBy: {
+        start_date: 'asc',
+      },
+      take: itemsPerPage,
+      skip: (curPage - 1) * itemsPerPage,
+      select: {
+        name: true,
+        addr: true,
+        category: true,
+        start_date: true,
+      }    
+    });
     
-    var result1 = await dbClient.query(query1);
 
-    const query2 = {
-      text: "SELECT count(*) as totalcount FROM restaurant WHERE addr LIKE $1",
-      values: ['%성수%'],
-    };
+    // start_date를 'yyyy-mm-dd' 형식으로 포맷하려면, 결과를 받은 후 JavaScript로 처리해야 합니다.
+    // Prisma 자체적으로 날짜 포맷을 변경하는 기능은 제공하지 않습니다.
+    var result1 = restaurants.map(restaurant => ({
+        ...restaurant,
+        start_date: restaurant.start_date.toISOString().split('T')[0], // 'yyyy-mm-dd' 형식으로 변환
+    }));
 
-    var result2 = await dbClient.query(query2);
-
+    var result2 = await prisma.oldRestaurant.count({
+      where: {
+        addr: {
+          contains: '성수',
+        },
+      },
+    });
+    
+    console.log(result1);
+    console.log(result2);
     // 두 결과를 하나의 객체로 결합
     const responseData = {
-      data: result1.rows, // 첫 번째 쿼리 결과
-      totalCount: result2.rows[0].totalcount // 두 번째 쿼리에서 totalCount 추출
+      data: result1, // 첫 번째 쿼리 결과
+      totalCount: result2 // 두 번째 쿼리에서 totalCount 추출
     };
 
     res.send(responseData);

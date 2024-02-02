@@ -15,7 +15,7 @@ const BoardList = () => {
     const fetchRestaurants = async (page) => {
       try {
         var params = {curPage:page,itemsPerPage:itemsPerPage}
-        const response = await axios.post(`http://localhost:8080/getDBRestaurant`, params);
+        const response = await axios.post(`http://localhost:8080/getDBRestaurant2`, params);
         const { data, totalCount } = response.data;
 
         setRestaurants(data);
