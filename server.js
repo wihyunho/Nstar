@@ -161,6 +161,7 @@ app.post('/getPlaceList', async (req, res) => {
         old_addr: true,
         category_nm: true,
         update_date: true,
+        phone: true,
       }
     });
 

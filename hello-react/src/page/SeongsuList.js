@@ -29,7 +29,7 @@ const PlaceList  = () => {
         const response = await axios.post(`http://localhost:8080/getPlaceList`, params);
         const { data, totalCount } = response.data;
         setRestaurants(data);
-        console.log(data);
+        console.log('아아아',data);
 
         data.forEach((item, index) => {
           naver.maps.Service.geocode({
@@ -44,12 +44,41 @@ const PlaceList  = () => {
 
             let location = naver.maps.LatLng(result);
 
-              new naver.maps.Marker({
+            let marker = new naver.maps.Marker({
                 position: location,
                 map:map
-              });
+            });
+            let contentString = `
+                <div>
+                  <h4>${item.name}</h4>
+                  <p>${item.old_addr}</p>
+                  <p>${item.phone}</p> 
+                </div>
+              `;
+
+            let infoWindow = new naver.maps.InfoWindow({
+              content: contentString,
+              maxWidth: 200, // 최대 너비 설정 (선택 사항)
+              backgroundColor: "#eee", // 배경색 설정 (선택 사항)
+              borderColor: "#2db400", // 테두리 색 설정 (선택 사항)
+              borderWidth: 5, // 테두리 두께 설정 (선택 사항)
+              anchorSize: new naver.maps.Size(30, 30), // 앵커 크기 설정 (선택 사항)
+              anchorSkew: true, // 앵커 비스듬히 설정 (선택 사항)
+              anchorColor: "#000", // 앵커 색 설정 (선택 사항)
+              pixelOffset: new naver.maps.Point(20, -20) // 픽셀 단위로 오버레이 창 위치 조정 (선택 사항)
+            });
+
+            naver.maps.Event.addListener(marker, 'click', function() {
+              if (infoWindow.getMap()) {
+                infoWindow.close();
+              } else {
+                infoWindow.open(map, marker);
+              }
+            });
           });
         });
+
+
         // 전체 페이지 계산
         // const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
         // setTotalPages(calculatedTotalPages);
@@ -95,12 +124,6 @@ const PlaceList  = () => {
                     </li>
                 ))}
               </ul>
-              {restaurants && (
-                <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'white', opacity: '0.9', padding: '10px', borderRadius: '5px', maxHeight: '300px', overflowY: 'auto', zIndex: '1000'}}>
-                  {/*<h2>{restaurant.name}</h2>*/}
-                  {/*<p>주소 {restaurant.old_addr}</p>*/}
-                </div>
-              )}
             </div>
           </div>
         </div>
